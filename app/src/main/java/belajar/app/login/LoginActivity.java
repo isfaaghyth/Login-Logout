@@ -9,15 +9,18 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.HashMap;
+
+import belajar.app.login.Storage.SQLiteHandler;
 import belajar.app.login.Utils.SessionManager;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     private EditText edtUsername, edtPassword;
     private Button btnLogin;
+    private TextView btnRegisterAccount;
 
-    private String[] data = {"admin", "123"};
-
+    private SQLiteHandler db;
     private SessionManager session;
 
     @Override
@@ -26,7 +29,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.activity_login);
 
         //inisialisasi
+        db = new SQLiteHandler(this);
         session = new SessionManager(this);
+
         //cek session
         if (session.isLoggedIn()) {
             Intent i = new Intent(LoginActivity.this, MainActivity.class);
@@ -38,8 +43,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         edtUsername = (EditText) findViewById(R.id.edt_username);
         edtPassword = (EditText) findViewById(R.id.edt_password);
         btnLogin = (Button) findViewById(R.id.btn_login);
+        btnRegisterAccount = (TextView) findViewById(R.id.btn_register_account);
 
         btnLogin.setOnClickListener(this);
+        btnRegisterAccount.setOnClickListener(this);
     }
 
     @Override
@@ -50,9 +57,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 String username = edtUsername.getText().toString();
                 String password = edtPassword.getText().toString();
 
+                HashMap<String, String> test;
+                test = db.getUserDetails();
+
                 if (!username.equals("") && !password.equals("")) {
-                    if (username.equals(data[0])) {
-                        if (password.equals(data[1])) {
+                    if (username.equals(test.get("username"))) {
+                        if (password.equals(test.get("password"))) {
                             session.setLogin(true);
                             Intent i = new Intent(LoginActivity.this, MainActivity.class);
                             startActivity(i);
@@ -66,6 +76,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 } else {
                     Toast.makeText(this, "Username dan password tidak boleh kosong.", Toast.LENGTH_SHORT).show();
                 }
+                break;
+            case R.id.btn_register_account:
+                Intent reg = new Intent(LoginActivity.this, RegisterActivity.class);
+                startActivity(reg);
+                finish();
                 break;
         }
     }

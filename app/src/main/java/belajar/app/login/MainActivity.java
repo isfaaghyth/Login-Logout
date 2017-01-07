@@ -6,12 +6,16 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import java.util.HashMap;
+
+import belajar.app.login.Storage.SQLiteHandler;
 import belajar.app.login.Utils.SessionManager;
 
 public class MainActivity extends AppCompatActivity {
 
     private Button btnLogout;
 
+    private SQLiteHandler db;
     private SessionManager session;
 
     @Override
@@ -20,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         //inisialisasi session
+        db = new SQLiteHandler(this);
         session = new SessionManager(this);
         //cek session
         if (!session.isLoggedIn()) {
@@ -29,6 +34,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
         btnLogout = (Button) findViewById(R.id.btn_logout);
+
+        HashMap<String, String> test = db.getUserDetails();
+        btnLogout.setText("Login as " + test.get("name") + "\nLogout?");
 
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
